@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+    <title>更改密码</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/templatemo_style.css' %}">
+    <script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body class="templatemo-bg-gray">
+<script>
+    $(function () {
+        $("#queding").on("click", function () {
+            alert("密码修改成功！");
+            /*  $.get("/setSession", {
+             'pno': $(this).parents("tr").children().eq(1).text(),
+             'cno': $(this).parents("tr").children().eq(0).text()
+             }, function (ret) {
+             window.open("http://localhost:8099/desc_position");
+             });
+             */
+        });
+        $("#fanhui").on("click", function () {
+            window.location="/home";
+            /*  $.get("/setSession", {
+             'pno': $(this).parents("tr").children().eq(1).text(),
+             'cno': $(this).parents("tr").children().eq(0).text()
+             }, function (ret) {
+             window.open("http://localhost:8099/desc_position");
+             });
+             */
+        });
+    });
+</script>
+<div class="container">
+    <div class="col-md-12">
+        <h1 class="margin-bottom-15">更改密码</h1>
+        <form class="form-horizontal templatemo-forgot-password-form templatemo-container" role="form" action="/findpw"
+              method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="col-md-12">
+                    请输入原来的密码.
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="oldpw" placeholder="原密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    请输入新的密码.
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="newpw" placeholder="新密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    请再次输入密码.
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="rpw" placeholder="重新输入">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input id="queding" value="确认" class="btn btn-danger">
+                    <input id="fanhui" value="返回" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

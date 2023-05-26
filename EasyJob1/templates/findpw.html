@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<head>
+    <title>忘记密码</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/templatemo_style.css' %}">
+    <script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body class="templatemo-bg-gray">
+<script>
+    $(function () {
+        $("#submit").on("click", function () {
+            $.get("/action_findpw", {
+                'emill': $("#email").val()
+            }, function (ret) {
+                if (ret.msg == "true") {
+                    alert("密码已重置，请登录邮箱查看！");
+                }
+                else {
+                     alert("该用户不存在！");
+                }
+            });
+        });
+    });
+</script>
+<div class="container">
+    <div class="col-md-12">
+        <h1 class="margin-bottom-15">找回密码</h1>
+        <form class="form-horizontal templatemo-forgot-password-form templatemo-container" role="form" action="/findpw"
+              method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="col-md-12">
+                    请输入您注册时的邮箱.
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="email" placeholder="Your email">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input id="submit" value="提交" class="btn btn-danger">
+                    <br><br>
+                    <a href="/home">登陆</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

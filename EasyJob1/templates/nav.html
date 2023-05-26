@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<script>
+    $(function () {
+        $("#list").on("click", ".message", function () {
+            alert("test");
+            /*     $.get("/setSession", {
+             'pno': $(this).parents("tr").children().eq(1).text(),
+             'cno': $(this).parents("tr").children().eq(0).text()
+             }, function (ret) {
+             window.open("http://localhost:8099/desc_position");
+             });
+             */
+        });
+
+    });
+</script>
+<div class="navbar navbar-fixed-top navbar-inverse row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                <li><a><span class="glyphicon glyphicon-home"></span></a></li>
+            </ul>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="/home">首页</a></li>
+            <li><a href="/jobsearch">职位搜索</a></li>
+            <li><a href="/careertalk">宣讲会</a></li>
+            <li><a href="/firmlist">公司</a></li>
+            <li><a href="/deliver">投递记录</a></li>
+        </ul>
+    </div>
+    {% if flag == 'false' %}
+        <div class="col-md-3">
+            <ul class="nav navbar-nav">
+                <li><a href="#login" data-toggle="modal" data-backdrop="static" data-target="#login">登陆</a></li>
+                <li><a href="#regjob" data-toggle="modal" data-backdrop="static" data-target="#regjob">求职者注册</a></li>
+                <li><a href="#regfirm" data-toggle="modal" data-backdrop="static" data-target="#regfirm">企业注册</a></li>
+            </ul>
+        </div>
+    {% else %}
+        <div class="col-md-3">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle">消息
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id="messagelist">
+                        {% for m in message %}
+                            <li><a class="message" href="#">{{ m }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle">个人中心
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/introform">我的简历</a></li>
+                        <li><a href="/changepw">修改密码</a></li>
+                        <li><a href="/loginout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+<div class="modal fade" id="regfirm" tabindex="-1" role="dialog" aria-labelledby="regfirm" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    企业注册
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form action="/regfirm" method="POST">
+                    {% csrf_token %}
+                    <table class="table table-striped">
+                        <tr>
+                            <td align="right">
+                                企业名称：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="name" placeholder="企业名称：" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                社会信用代码：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="code" placeholder="社会信用代码：" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                法定代表人：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="boss" placeholder="法定代表人：" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                登记机关：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="reg_l" placeholder="登记机关" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                登记日期：
+                            </td>
+                            <td align="left">
+                                <input type="date" name="reg_d"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                公司地址：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="loc" placeholder="公司地址" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                公司电话：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="phone" placeholder="公司电话" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                公司邮箱：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="emill" placeholder="公司邮箱" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                密 码：
+                            </td>
+                            <td align="left">
+                                <input type="password" name="pw1" id="pw1" placeholder="密码" required
+                                       onkeyup="passwd()"/>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                密码确认：
+                            </td>
+                            <td align="left">
+                                <input type="password" name="pw2" id="pw2" placeholder="确认密码" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <button id="submit" class="btn btn-default" type="submit">注册</button>
+                            </td>
+                            <td align="left">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="regjob" tabindex="-1" role="dialog" aria-labelledby="regjob" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    求职者注册
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form action="/regjob" method="POST">
+                    {% csrf_token %}
+                    <table class="table table-striped">
+                        <tr>
+                            <td align="right">
+                                姓名：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="name" placeholder="姓名：" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                性别：
+                            </td>
+                            <td align="left">
+                                <select name="sex">
+                                    <option value="男" selected>男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                出生日期：
+                            </td>
+                            <td align="left">
+                                <input type="date" name="date"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                籍贯：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="loc" placeholder="籍贯" required/>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td align="right">
+                                政治面貌：
+                            </td>
+                            <td align="left">
+                                <select name="polistatus">
+                                    <option value="团员">团员</option>
+                                    <option value="党员">党员</option>
+                                    <option value="老百姓">老百姓</option>
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                电话：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="phone" placeholder="电话" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                邮箱：
+                            </td>
+                            <td align="left">
+                                <input type="text" name="emill" placeholder="邮箱" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                密 码：
+                            </td>
+                            <td align="left">
+                                <input type="password" name="pw1" id="pw1" placeholder="密码" required
+                                       onkeyup="passwd()"/>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                密码确认：
+                            </td>
+                            <td align="left">
+                                <input type="password" name="pw2" id="pw2" placeholder="确认密码" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                个人评价：
+                            </td>
+                            <td align="left">
+                                <textarea id="text" name="text" rows="3" cols="50"></textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td align="right">
+                                <button id="submit" class="btn btn-default" type="submit">注册</button>
+                            </td>
+                            <td align="left">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    用户登录
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form action="/login" method="POST">
+                    {% csrf_token %}
+                    <h2 align="center">请登录!</h2>
+                    <label for="username" class="sr-only">用户名</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required
+                           autofocus>
+                    <label for="inputPassword" class="sr-only">密码</label>
+                    <p></p>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="密码" required>
+                    <div class="radio row">
+                        <div class="col-lg-9">
+                            <label>
+                                <input type="radio" class="options" name="options" id="option1" value="hr">企业
+                            </label>
+                            <label>
+                                <input type="radio" class="options" name="options" id="option2" value="job" checked>求职者
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox row">
+                        <div class="col-lg-4">
+                            <label>
+                                <input type="checkbox" value="remember-me">
+                                记住我
+                            </label>
+                        </div>
+                    </div>
+                    <button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+                    <div class="row">
+                        <div class="col-lg-10">
+
+                        </div>
+                        <div class="col-lg-2">
+                            <a id="forgetpw" href="/findpw">忘记密码</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在线招聘系统</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body style="background:gainsboro">
+<script src="{% static 'js/my.js' %}"></script>
+<script>
+    var type = "";
+    function change() {
+
+    }
+    $(function () {
+        $("#poslist").on("click", ".detailBtn", function () {
+             $.get("/setSession", {
+             'pno': $(this).parents("tr").children().eq(1).text(),
+             'cno': $(this).parents("tr").children().eq(0).text()
+             }, function (ret) {
+             window.open("/desc_position");
+             });
+
+        });
+    });
+    $(function () {
+        $("#position_submit").on("click", function () {
+            $.get("/pubposition", {
+                'indus': $("#dustry2").val(),
+                'positionname': $("#position_name").val(),
+                'salary': $("#salary").val(),
+                'type': $("#type").val(),
+                'loc': $("#area").val(),
+                'grad': $("#grad").val(),
+                'desc': $("#position_desc").val()
+            }, function (ret) {
+                alert("发布成功！");
+            });
+        });
+        $(".yaoqing").on("click", function () {
+            var id = this.getAttribute("aid");
+            $.get("/yaoqing", {
+                'id': id
+            }, function (ret) {
+                alert("已邀请！");
+            });
+        });
+        $("#firmsubmit").on("click", function () {
+            alert("修改成功！");
+        });
+        $("#yingyong").on("click", function () {
+                alert("已更改设置！");
+        });
+    });
+</script>
+<div class="navbar navbar-fixed-top navbar-inverse row">
+    <div class="col-md-3">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                <li><a href="#">EasyJob企业端
+                    <small>在线招聘网站</small>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-7">
+    </div>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle">消息
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" id="messagelist">
+                    {% for m in message %}
+                        <li><a class="message" href="#">{{ m }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle">个人中心
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/changepw">修改密码</a></li>
+                    <li><a href="/loginout">退出</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<br/><br/><br/><br/><br/>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-4 table-bordered" style="background: #122b40">
+                    <ul class="nav nav-pills nav-tabs nav-stacked" id="mytab">
+                        <li style="background:gainsboro" class="active">
+                            <a href="#firminfo" data-toggle="tab"><span></span>公司信息</a>
+                        </li>
+                        <li style="background:gainsboro">
+                            <a href="#position" data-toggle="tab"><span></span>发布职位</a>
+                        </li>
+                        <li style="background:gainsboro">
+                            <a href="#xjh" data-toggle="tab"><span></span>发布宣讲会</a>
+                        </li>
+                        <li style="background:gainsboro">
+                            <a href="#nowposition" data-toggle="tab"><span></span>当前发布的职位</a>
+                        </li>
+                        <li style="background:gainsboro">
+                            <a href="#jilu" data-toggle="tab"><span></span>投递记录</a>
+                        </li>
+                        <li style="background:gainsboro">
+                            <a href="#setting" data-toggle="tab"><span></span>系统设置</a>
+                        </li>
+                    </ul>
+                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                </div>
+                <div class="col-lg-8 table-bordered">
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade in active" id="firminfo">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td align="right">
+                                        企业名称：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.name }}" name="name" placeholder="企业名称：" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        社会信用代码：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.code }}" name="code" placeholder="社会信用代码："
+                                               required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        法定代表人：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.boss }}" name="boss" placeholder="法定代表人：" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        登记机关：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.reg_l }}" name="reg_l" placeholder="登记机关" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        登记日期：
+                                    </td>
+                                    <td align="left">
+                                        <input type="date" value="{{ company.reg_d|date:"Y-m-d" }}" name="reg_d"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        公司地址：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.loc }}" name="loc"
+                                               placeholder="公司地址" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        公司电话：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.phone }}" name="phone" placeholder="公司电话" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        公司邮箱：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" value="{{ company.emill  }}" name="emill" placeholder="公司邮箱"
+                                               required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        <button id="firmsubmit" class="btn btn-default" style="display:none;">提交</button>
+                                    </td>
+                                    <td align="left">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">返回
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="position">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td align="right">
+                                        一级行业：
+                                    </td>
+                                    <td align="left">
+                                        <select id="dustry1" name="dustry1"
+                                                onchange="getsecondindustry(this.options[this.options.selectedIndex].value)">
+                                            {% for d in indusrylist %}
+                                                <option value="{{ d.code }}">{{ d.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td align="right">
+                                        二级行业：
+                                    </td>
+                                    <td align="left">
+                                        <select id="dustry2" name="dustry2">
+                                            <option value="-1">请选择</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        所在省：
+                                    </td>
+                                    <td align="left" colspan="3">
+                                        <select id="pro" name="pro"
+                                                onchange="getcity(this.options[this.options.selectedIndex].value)">
+                                            {% for p in provincelist %}
+                                                <option value="{{ p.code }}">{{ p.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                         &nbsp;&nbsp;所在市：
+                                        <select id="city" name="city" onchange="getarea2(this.options[this.options.selectedIndex].value)">
+                                            <option value="-1">请选择</option>
+                                        </select>
+                                        &nbsp;&nbsp;所在区县：
+                                         <select id="area" name="area">
+                                            <option value="-1">请选择</option>
+                                        </select>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        职位名称：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" id="position_name" placeholder="例：软件工程师" required/>
+                                    </td>
+                                    <td align="right">
+                                        薪资：
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" id="salary" name="salary" placeholder="例：6000" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        工作性质：
+                                    </td>
+                                    <td align="left">
+                                        <select id="type" name="type">
+                                            <option value="实习">实习</option>
+                                            <option value="全职">全职</option>
+                                            <option value="兼职">兼职</option>
+                                        </select>
+                                    </td>
+
+                                    <td align="right">
+                                        要求学历：
+                                    </td>
+                                    <td align="left">
+                                        <select id="grad" name="grad">
+                                            <option value="6">博士</option>
+                                            <option value="5">硕士</option>
+                                            <option value="4">本科</option>
+                                            <option value="3">专科</option>
+                                            <option value="2">高中</option>
+                                            <option value="1">其他</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:20%" colspan="1" align="right">职位描述</td>
+                                    <td style="width:80%;" colspan="3"><textarea id="position_desc"
+                                                                                 rows="9" cols="80"
+                                                                                 class="form-control"
+                                                                                 placeholder="例：掌握C++，CET-4"
+                                                                                 required></textarea></td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        <button id="position_submit" class="btn btn-default">发布</button>
+                                    </td>
+                                    <td align="left">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">返回
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="xjh">
+                            <form action="/pubcareertalk" method="POST">
+                                {% csrf_token %}
+                                <table class="table table-striped">
+                                    <tbody>
+                                    <tr>
+                                        <td style="width:10%" colspan="1">
+                                            宣讲日期：
+                                        </td>
+                                        <td style="width:90%" colspan="5">
+                                            <input type="date" name="date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:10%" colspan="1">
+                                            地点：
+                                        </td>
+                                        <td style="width:90%" colspan="5">
+                                            <input type="text" id="loc" name="loc"
+                                                   class="form-control text-left"
+                                                   placeholder="例：西安科技大学就创中心103室" required/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="width:10%" colspan="1">描述</td>
+                                        <td style="width:90%;" colspan="5"><textarea name="desc"
+                                                                                     rows="9" cols="80"
+                                                                                     class="form-control"
+                                                                                     id="pContent"
+                                                                                     placeholder="例：掌握C++，CET-4"
+                                                                                     required></textarea></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <button id="submit" class="btn btn-default" type="submit">发布</button>
+                                        </td>
+                                        <td align="left">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">返回
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="nowposition">
+                            <table class="table table-striped" id="poslist">
+                                <tr>
+                                    <td align="center">公司名称</td>
+                                    <td align="center">职位名</td>
+                                    <td align="center">工资</td>
+                                    <td align="center">类型</td>
+                                    <td align="center">发布日期</td>
+
+                                    <td align="right">
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            <!--
+                                <tr>
+                                    <td align="center">职位56</td>
+                                    <td align="center">2017-5-6</td>
+                                    <td align="right">
+                                        <button class="btn btn-default" type="button" id="edit" name="edit">修改
+                                        </button>
+                                    </td>
+                                    <td align="left">
+                                        <button class="btn btn-default" type="button" id="dele" name="dele">删除</button>
+                                    </td>
+                                </tr>
+                                -->
+
+                                {% for p in positions %}
+                                    <tr>
+                                        <td>{{ p.2 }}</td>
+                                        <td>{{ p.0 }}</td>
+                                        <td>{{ p.3 }}</td>
+                                        <td>{{ p.4 }}</td>
+                                        <td>{{ p.1|date:"Y-m-d" }}</td>
+                                        <td align="right">
+                                            <button type="button" class="btn btn-default detailBtn" id="edit" name="edit" >查看
+                                            </button>
+                                        </td>
+                                        <td align="left">
+                                            <a type="button" class="btn btn-default" id="dele" name="dele" href="/delposition?id={{ p.5 }}">删除
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="jilu">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td>投递id</td>
+                                    <td align="center">用户名</td>
+                                    <td align="center">投递职位</td>
+                                    <td align="center">投递日期</td>
+                                    <td align="center">处理状态</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            <!--
+                                <tr>
+                                    <td>3333</td>
+                                    <td align="center">刘子瑞</td>
+                                    <td align="center">职位56</td>
+                                    <td align="center">2017-5-27</td>
+                                    <td align="center">正在处理</td>
+                                    <td align="right">
+                                        <button class="btn btn-default" type="button" id="yaoqing" name="edit">邀请面试
+                                        </button>
+                                    </td>
+                                    <td align="left">
+                                        <button class="btn btn-default" type="button" id="dele" name="dele">删除</button>
+                                    </td>
+                                </tr>-->
+                                {% for po in posintents %}
+                                    <tr>
+
+                                        <td>{{ po.3 }}</td>
+                                        <td>{{ po.0 }}</td>
+                                        <td>{{ po.1 }}</td>
+                                        <td>{{ po.2| date:"Y-m-d" }}</td>
+                                        <td>
+                                            {% if po.4 == 0 %}
+                                                正在处理
+                                            {% else %}
+                                                已邀请
+                                            {% endif %}
+                                        </td>
+
+                                        <td align="right">
+                                            {% if po.4 == 0 %}
+                                            <button class="btn btn-default yaoqing" type="button" aid="{{ po.3 }}" name="edit">邀请面试
+                                            </button>
+                                            {% endif %}
+                                        </td>
+                                        <td align="left">
+                                            <a class="btn btn-default" type="button" id="dele" name="dele" href="/deliver_delete2?id={{ po.3 }}" onclick="return confirm('确认删除？');">删除
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="setting">
+                            <table class="table table-striped">
+
+                                <tr>
+                                    <td align="right">
+                                        邮件提醒：
+                                    </td>
+                                    <td align="left">
+                                        <select id="tixing" onchange="change()">
+                                            <option value="yes">是</option>
+                                            <option value="no">否</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        简历筛选：
+                                    </td>
+                                    <td align="left">
+                                        <select id="shaixuan" name="shaixuan" onchange="change()">
+                                            <option value="-1">请选择</option>
+                                            <option value="1">博士</option>
+                                            <option value="2">硕士</option>
+                                            <option value="3">本科</option>
+                                            <option value="4">专科</option>
+                                            <option value="5">高中</option>
+                                            <option value="6">其他</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                        <button id="yingyong" class="btn btn-default">应用</button>
+                                    </td>
+                                    <td align="left">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">返回
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

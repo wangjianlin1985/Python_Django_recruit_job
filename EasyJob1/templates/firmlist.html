@@ -1,0 +1,153 @@
+<!--
+模板名：招聘会视图
+模板继承：使用job_home的样式
+ -->
+{% extends 'jobs_home.html' %}
+{% block title %}公司{% endblock %}
+{% block content %}
+    {% load static %}
+    <script src="{% static 'js/my.js' %}"></script>
+    <script>
+
+        $(function () {
+            var pageCount = {{ pagecount }}; //取到pageCount的值(把返回数据转成object类型)
+            var currentPage = {{ current }}; //得到urrentPage
+            var options = {
+                bootstrapMajorVersion: 3, //版本
+                currentPage: currentPage, //当前页数
+                totalPages: pageCount, //总页数
+                itemTexts: function (type, page, current) {
+                    switch (type) {
+                        case "first":
+                            return "首页";
+                        case "prev":
+                            return "上一页";
+                        case "next":
+                            return "下一页";
+                        case "last":
+                            return "末页";
+                        case "page":
+                            return page;
+                    }
+                },//点击事件，用于通过Ajax来刷新整个list列表
+                onPageClicked: function (event, originalEvent, type, page) {
+                    $.get("/getfirmpage", {'index': page}, function (ret) {
+                        if (ret) {
+                            var str = "";
+                            $.each(ret.data, function (index, row) {
+                                str += "<tr>";
+                                $.each(row, function (i, data) {
+                                    str += "<td align=\"center\">" + data + "</td>";
+                                });
+                                str += "<td align=\"center\"><a class=\"xiangqing\"  href=\"###\">详情</a></td>" +
+                                        "</tr>";
+
+                            });
+                            $("#list").html(str);
+                        }
+                    })
+                }
+            };
+            $("#page").bootstrapPaginator(options);
+
+            $("#list").on("click", ".xiangqing", function () {
+                $.get("/setSession", {
+                    'pno': '-1',
+                    'cno': $(this).parents("tr").children().eq(0).text()
+                }, function (ret) {
+                    window.open("/desc_firm");
+                });
+            });
+        });
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-10">
+                <div class="input-group" style="display:none;">
+                    <input type="text" class="form-control" placeholder="公司名"/>
+                    <span class="input-group-btn">
+                         <button class="btn btn-primary" type="button">搜索</button>
+                    </span>
+                </div>
+                <div>
+                    <table class="table" style="display:none;">
+                        <tbody>
+                        <tr>
+                            <td align="right">
+                                所在省：
+                            </td>
+                            <td align="left">
+                                <select id="pro" name="pro"
+                                        onchange="getcity(this.options[this.options.selectedIndex].value)">
+                                    {% for p in provincelist %}
+                                        <option value="{{ p.code }}">{{ p.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td align="right">
+                                所在市：
+                            </td>
+                            <td align="left">
+                                <select id="city" name="city"
+                                        onchange="getarea(this.options[this.options.selectedIndex].value)">
+                                    <option value="-1">请选择</option>
+                                </select>
+                            </td>
+                            <td align="right">
+                                所在区县：
+                            </td>
+                            <td align="left">
+                                <select id="area" name="area"
+                                        onchange="setloc(this.options[this.options.selectedIndex].value)">
+                                    <option value="-1">请选择</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-1">
+            </div>
+        </div>
+        <div class="row" style="background: white">
+            <div>
+                <table class="table table-hover" style="border-collapse:separate; border-spacing:0px 10px;">
+                    <thead>
+                    <tr>
+                        <td align="center">公司名</td>
+                        <td align="center">公司地址</td>
+                        <td align="center">在招职位</td>
+                        <td align="center">最新发布时间</td>
+                        <td align="center">
+                            操作
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody id="list">
+                    {% for data in dataset %}
+                        <tr>
+                            <td align="center">{{ data.0 }}</td>
+                            <td align="center">{{ data.1 }}</td>
+                            <td align="center">{{ data.2 }}</td>
+                            <td align="center">{{ data.3 |date:'Y-m-d' }}</td>
+                            <td align="center"><a class="xiangqing" href="###">详情</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7">
+            </div>
+            <div class="col-lg-5">
+                <ul id="page">
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
